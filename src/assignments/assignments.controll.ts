@@ -1,22 +1,19 @@
-import { Controller, Get, Param } from '@nestjs/common';
+import { Controller, Get, Param, ParseIntPipe } from '@nestjs/common';
 
-@Controller('assignments1-fibonacci-sequence')
-export class AssignmentsController {
-  @Get('fibonacci/:n')
-  getFibonacciSequence(@Param('n') n: number): { sequence: number[] } {
-    const sequence = this.generateFibonacci(Number(n));
-    return { sequence };
-  }
+@Controller()
+export class PrimeController {
 
-  private generateFibonacci(n: number): number[] {
-    if (n <= 0) return [];
-    if (n === 1) return [0];
-    if (n === 2) return [0, 1];
-
-    const sequence = [0, 1];
-    for (let i = 2; i < n; i++) {
-      sequence.push(sequence[i - 1] + sequence[i - 2]);
+    @Get('prime/:number')
+    isPrime(@Param('number', ParseIntPipe) number: number): { isPrime: boolean } {
+        const result = this.checkPrime(number);
+        return { isPrime: result };
     }
-    return sequence;
-  }
+
+    private checkPrime(num: number): boolean {
+        if (num <= 1) return false;
+        for (let i = 2; i <= Math.sqrt(num); i++) {
+            if (num % i === 0) return false;
+        }
+        return true;
+    }
 }
