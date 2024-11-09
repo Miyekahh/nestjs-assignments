@@ -1,19 +1,22 @@
-import { Controller, Get, Param, ParseIntPipe } from '@nestjs/common';
+import { Controller, Get, Param, BadRequestException } from '@nestjs/common';
 
 @Controller()
-export class PrimeController {
+export class FactorialController {
 
-    @Get('prime/:number')
-    isPrime(@Param('number', ParseIntPipe) number: number): { isPrime: boolean } {
-        const result = this.checkPrime(number);
-        return { isPrime: result };
+    @Get('factorial/:number')
+    getFactorial(@Param('number') number: string): { factorial: number } {
+        const num = parseInt(number, 10);
+
+        if (isNaN(num) || num < 0) {
+            throw new BadRequestException('Please provide a non-negative integer');
+        }
+        
+        const factorial = this.calculateFactorial(num);
+        return { factorial };
     }
 
-    private checkPrime(num: number): boolean {
-        if (num <= 1) return false;
-        for (let i = 2; i <= Math.sqrt(num); i++) {
-            if (num % i === 0) return false;
-        }
-        return true;
+    private calculateFactorial(num: number): number {
+        if (num === 0 || num === 1) return 1;
+        return num * this.calculateFactorial(num - 1);
     }
 }
